@@ -1,4 +1,12 @@
-import { getDatabase, ref, set, get, child, remove } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  child,
+  remove,
+  onValue,
+} from "firebase/database";
 
 //adding data to database with user defined user-id
 const addData = async (req, res) => {
@@ -26,18 +34,33 @@ const addData = async (req, res) => {
 
 // getting all data present in collection
 const getData = async (req, res) => {
-  const dbRef = ref(getDatabase());
-
   try {
-    let result = await get(child(dbRef, `usersNew/`));
-    if (result) {
-      return res.status(200).send(result.val());
-    }
-    console.log("Not Found");
-    return res.status(404).json({ msg: "Not Found" });
+    const db = getDatabase();
+    const response = await new Promise((resolve, reject) => {
+      try {
+        onValue(
+          ref(db, "usersNew/"),
+          (snapshot) => {
+            try {
+              resolve(snapshot.val());
+            } catch (error) {
+              reject({"error": error});
+            }
+          },
+          { onlyOnce: true }
+        );
+      } catch (error) {
+        reject({"error": error});
+      }
+    });
+    console.log(response)
+
+    if(!response) return res.status(404).json({msg: "Not Found"})
+    else if(typeof response == "object" && response["error"] != undefined) return res.status(400).json({msg: "Bad Request"});
+    return res.status(200).json({response: response});
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ msg: "unable to get" });
+    return res.status(500).json({ msg: "unable to get", error: "Internal Server Error" });
   }
 };
 
@@ -53,9 +76,8 @@ const deleteData = async (req, res) => {
     if (result.val() && result !== null) {
       remove(ref(getDatabase(), `usersNew/${userId}/`));
       res.status(200).json({ msg: "deleted successfully" });
-    } 
-      return res.status(404).json({ msg: "Not Found" });
-    
+    }
+    return res.status(404).json({ msg: "Not Found" });
   } catch (err) {
     return res.status(500).json({ msg: "unable to delete" });
   }
@@ -86,19 +108,33 @@ const updateData = async (req, res) => {
 
 const getDataById = async (req, res) => {
   const userId = req.params.id;
-  const dbRef = ref(getDatabase());
   try {
-    let result = await get(child(dbRef, `usersNew/${userId}/`));
-    if (result.val() && result !== null) {
-      return res.status(200).send(result.val());
-    } 
-      console.log("Not Found");
-      return res.status(404).json({ msg: "Not Found" });
-    
+    const db = getDatabase();
+    const response = await new Promise((resolve, reject) => {
+      try {
+        onValue(
+          ref(db, `usersNew/${userId}`),
+          (snapshot) => {
+            try {
+              resolve(snapshot.val());
+            } catch (error) {
+              reject({"error": error});
+            }
+          },
+          { onlyOnce: true }
+        );
+      } catch (error) {
+        reject({"error": error});
+      }
+    });
+    console.log(response)
+
+    if(!response) return res.status(404).json({msg: "Not Found"})
+    else if(typeof response == "object" && response["error"] != undefined) return res.status(400).json({msg: "Bad Request"});
+    return res.status(200).json({response: response});
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ msg: "unable to get" });
+    return res.status(500).json({ msg: "unable to get", error: "Internal Server Error" });
   }
 };
-
 export { addData, getData, deleteData, updateData, getDataById };

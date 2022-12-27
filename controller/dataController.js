@@ -4,7 +4,7 @@ import { getDatabase, ref, set, get, child, remove } from "firebase/database";
 const addData = async (req, res) => {
   const { userId, name, age, email } = req.body;
   // let result;
- 
+
   try {
     const db = getDatabase();
     try {
@@ -13,35 +13,31 @@ const addData = async (req, res) => {
         age: age,
         email: email,
       });
-      console.log("Data Added")
-      return res.status(200).json({msg: "Data Added Successfully"})
+      console.log("Data Added");
+      return res.status(200).json({ msg: "Data Added Successfully" });
     } catch (error) {
-      console.log(error)
-      return res.status(400).json({msg:"Bad Request"})
+      console.log(error);
+      return res.status(404).json({ msg: "Not Added" });
     }
-    
   } catch (err) {
-    return res.status(500).json({msg:"unable to add"});
+    return res.status(500).json({ msg: "Error" });
   }
 };
 
 // getting all data present in collection
 const getData = async (req, res) => {
   const dbRef = ref(getDatabase());
-  try { 
-   
-   await get(child(dbRef, `usersNew/`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.val());
-        return res.status(200).send(snapshot.val());
-      } else {
-        console.log("Bad Request");
-        return res.status(400).json({msg:"Bad Request"})
-      }
-    });
+
+  try {
+    let result = await get(child(dbRef, `usersNew/`));
+    if (result) {
+      return res.status(200).send(result.val());
+    }
+    console.log("Not Found");
+    return res.status(404).json({ msg: "Not Found" });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({msg:"unable to get"})
+    return res.status(500).json({ msg: "unable to get" });
   }
 };
 
@@ -50,21 +46,19 @@ const getData = async (req, res) => {
 const deleteData = async (req, res) => {
   const userId = req.params.id;
   console.log(userId);
-    const dbRef = ref(getDatabase());
-    try {
-        await get(child(dbRef, `usersNew/${userId}`)).then((snapshot) => {
-           if (snapshot.exists()) {
-             remove(ref(getDatabase(), `usersNew/${userId}/`))
-            res.status(200).json({msg:"deleted successfully"})
-           }
-           else{
-            return res.status(400).json({msg:"Bad Request"})
-           }
-     
-    })}
-   catch (err) {
-    return res.status(500).json({msg:"unable to delete"});
-  } 
+  const dbRef = ref(getDatabase());
+  try {
+    let result = await get(child(dbRef, `usersNew/${userId}`));
+    console.log(result.val());
+    if (result.val() && result !== null) {
+      remove(ref(getDatabase(), `usersNew/${userId}/`));
+      res.status(200).json({ msg: "deleted successfully" });
+    } 
+      return res.status(404).json({ msg: "Not Found" });
+    
+  } catch (err) {
+    return res.status(500).json({ msg: "unable to delete" });
+  }
 };
 
 // update to database based upon userId
@@ -74,41 +68,37 @@ const updateData = async (req, res) => {
   const { name, age, email } = req.body;
   const dbRef = ref(getDatabase());
   try {
-      await get(dbRef, `usersNew/${userId}`).then((snapshot) => {
-        if (snapshot.exists()) {
-               set(ref(getDatabase(), "usersNew/" + `${userId}`), {
-                 username: name,
-                 age: age,
-                 email: email,
-                });
-    return res.status(201).send("added successfully");
+    let result = await get(dbRef, `usersNew/${userId}`);
+    if (result.val() && result !== null) {
+      set(ref(getDatabase(), "usersNew/" + `${userId}`), {
+        username: name,
+        age: age,
+        email: email,
+      });
+      return res.status(201).send("added successfully");
     }
-      return res.status(400).json({msg:"Bad Request"})
-    })
-    
+    return res.status(404).json({ msg: "Not Found" });
   } catch (err) {
     console.log(err.msg);
-    return res.status(500).json({msg:"unable to update"});
+    return res.status(500).json({ msg: "unable to update" });
   }
-}
+};
 
-const getDataById=async(req,res)=>{
+const getDataById = async (req, res) => {
   const userId = req.params.id;
   const dbRef = ref(getDatabase());
-  try { 
-    await get(child(dbRef, `usersNew/${userId}/`)).then((snapshot) => {
-       if (snapshot.exists()) {
-         console.log(snapshot.val());
-         return res.status(200).send(snapshot.val());
-       } else {
-         console.log("Bad Request");
-         return res.status(400).json({msg:"Bad Request"})
-       }
-     });
-   } catch (err) {
-     console.log(err);
-     return res.status(500).json({msg:"unable to get"})
-   }
-}
+  try {
+    let result = await get(child(dbRef, `usersNew/${userId}/`));
+    if (result.val() && result !== null) {
+      return res.status(200).send(result.val());
+    } 
+      console.log("Not Found");
+      return res.status(404).json({ msg: "Not Found" });
+    
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "unable to get" });
+  }
+};
 
-export { addData, getData, deleteData, updateData,getDataById };
+export { addData, getData, deleteData, updateData, getDataById };

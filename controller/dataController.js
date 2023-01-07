@@ -21,14 +21,40 @@ const addData = async (req, res) => {
         age: age,
         email: email,
       });
-      console.log("Data Added");
+     // console.log("Data Added");
       return res.status(200).json({ msg: "Data Added Successfully" });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       return res.status(404).json({ msg: "Not Added" });
     }
   } catch (err) {
     return res.status(500).json({ msg: "Error" });
+  }
+};
+
+const addDataInFirebase = async (responseTime) => {
+  const [method,url,status] = responseTime;
+  console.log(method)
+  console.log(url)
+  console.log(status)
+  // let result;
+
+  try {
+    const db = getDatabase();
+    try {
+      await set(ref(db, "usersNew/morgan" ), {
+        method: method,
+        url:url,
+        status:status
+        
+      });
+    
+    } catch (error) {
+      console.log(error);
+     
+    }
+  } catch (err) {
+    console.log(err)
   }
 };
 
@@ -44,23 +70,26 @@ const getData = async (req, res) => {
             try {
               resolve(snapshot.val());
             } catch (error) {
-              reject({"error": error});
+              reject({ error: error });
             }
           },
           { onlyOnce: true }
         );
       } catch (error) {
-        reject({"error": error});
+        reject({ error: error });
       }
     });
-    console.log(response)
+   // console.log(response);
 
-    if(!response) return res.status(404).json({msg: "Not Found"})
-    else if(typeof response == "object" && response["error"] != undefined) return res.status(400).json({msg: "Bad Request"});
-    return res.status(200).json({response: response});
+    if (!response) return res.status(404).json({ msg: "Not Found" });
+    else if (typeof response == "object" && response["error"] != undefined)
+      return res.status(400).json({ msg: "Bad Request" });
+    return res.status(200).json({ response: response });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ msg: "unable to get", error: "Internal Server Error" });
+   // console.log(err);
+    return res
+      .status(500)
+      .json({ msg: "unable to get", error: "Internal Server Error" });
   }
 };
 
@@ -68,7 +97,7 @@ const getData = async (req, res) => {
 
 const deleteData = async (req, res) => {
   const userId = req.params.id;
-  console.log(userId);
+ // console.log(userId);
   const dbRef = ref(getDatabase());
   try {
     let result = await get(child(dbRef, `usersNew/${userId}`));
@@ -101,7 +130,7 @@ const updateData = async (req, res) => {
     }
     return res.status(404).json({ msg: "Not Found" });
   } catch (err) {
-    console.log(err.msg);
+    //console.log(err.msg);
     return res.status(500).json({ msg: "unable to update" });
   }
 };
@@ -118,23 +147,26 @@ const getDataById = async (req, res) => {
             try {
               resolve(snapshot.val());
             } catch (error) {
-              reject({"error": error});
+              reject({ error: error });
             }
           },
           { onlyOnce: true }
         );
       } catch (error) {
-        reject({"error": error});
+        reject({ error: error });
       }
     });
-    console.log(response)
+    //console.log(response);
 
-    if(!response) return res.status(404).json({msg: "Not Found"})
-    else if(typeof response == "object" && response["error"] != undefined) return res.status(400).json({msg: "Bad Request"});
-    return res.status(200).json({response: response});
+    if (!response) return res.status(404).json({ msg: "Not Found" });
+    else if (typeof response == "object" && response["error"] != undefined)
+      return res.status(400).json({ msg: "Bad Request" });
+    return res.status(200).json({ response: response });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ msg: "unable to get", error: "Internal Server Error" });
+    //console.log(err);
+    return res
+      .status(500)
+      .json({ msg: "unable to get", error: "Internal Server Error" });
   }
 };
-export { addData, getData, deleteData, updateData, getDataById };
+export { addData, getData, deleteData, updateData, getDataById,addDataInFirebase };

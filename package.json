@@ -2,19 +2,19 @@
   "name": "firebase_learning_demo",
   "version": "1.0.0",
   "description": "",
- 
-  
   "scripts": {
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Subrat Kumar Sahu",
-  "type":"module",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
     "firebase": "^9.15.0",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
-    "npm": "^9.2.0"
+    "npm": "^9.2.0",
+    "winston": "^3.8.2"
   }
 }

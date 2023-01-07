@@ -1,0 +1,16 @@
+::1 - - [Fri, 06 Jan 2023 07:51:25 GMT] "GET /data/ HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [06/Jan/2023:07:55:16 +0000] "GET /data/ HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [06/Jan/2023:07:55:27 +0000] "GET /data/ HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [06/Jan/2023:07:55:31 +0000] "GET /data/ HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [06/Jan/2023:07:55:38 +0000] "GET /data/ HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+GET /data/ 304  - 1082.515 ms
+GET /data/ 304  - 301.251 ms
+GET /data/ 304  - 294.250 ms
+GET /data/ 304  - 1130.517 ms
+GET /data/ 304  - 292.748 ms
+GET /data/ 304  - 985.016 ms
+GET /data/ 304  - 1051.349 ms
+GET /data/ 304  - 1019.464 ms
+GET /data/ 304  - 1020.798 ms
+GET /data/ 304  - 989.879 ms
+GET /data/ 304  - 1016.787 ms
